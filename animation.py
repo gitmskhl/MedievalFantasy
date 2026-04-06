@@ -34,5 +34,7 @@ class Animation:
     def reset(self):
         self.index = 0
         self.period = self.startperiod
+    def what_size_of_img(self):
+        return self.images[self.index].get_size()
         
         

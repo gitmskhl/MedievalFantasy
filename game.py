@@ -13,21 +13,37 @@ lastcamy = mlevel.ycamera
 moving = False
 warriors = []
 mlevel.load(warriors)
+def clicknowhere():
+    for i in warriors:
+        hitbox = i.gethitbox()
+        if hitbox.collidepoint(mpos[0] + mlevel.xcamera, mpos[1] + mlevel.ycamera):
+            return False
+    return True
 while True:
     fps.tick(60)
     screen.fill('black')
     events = pygame.event.get()
     mpos = pygame.mouse.get_pos()
+    click = False
+
     for i in events:
         if i.type == pygame.KEYDOWN:
             if i.key == pygame.K_ESCAPE:
                 quit()
-        if i.type == pygame.MOUSEBUTTONDOWN and i.button == 2:
+        if i.type == pygame.MOUSEBUTTONDOWN and i.button == 1:
             lastcamx = mpos[0]
             lastcamy = mpos[1]
+            click = True
             moving = True
-        if i.type == pygame.MOUSEBUTTONUP and i.button == 2:
+            if clicknowhere() == True:
+                for j in warriors:
+                    if j.select == True:
+                        j.targetx = pygame.mouse.get_pos()[0] + mlevel.xcamera
+                        j.targety = pygame.mouse.get_pos()[1] + mlevel.ycamera
+                        j.mustmove = True
+        if i.type == pygame.MOUSEBUTTONUP and i.button == 1:
             moving = False
+            click = False
         if i.type == pygame.MOUSEWHEEL:
             if i.y > 0:
                 mlevel.resize_everything(1, mpos)
@@ -53,6 +69,8 @@ while True:
     mlevel.render(screen)
     for i in warriors:
         i.render(screen, mlevel.xcamera, mlevel.ycamera, mlevel.scale)
-        i.update()
+        i.update(click)
+        if i.mustmove == True:
+            i.moving()
 
     pygame.display.update()
