@@ -16,7 +16,7 @@ class Animation:
             width = max(1, round(image.get_width() * scale))
             height = max(1, round(image.get_height() * scale))
             image = pygame.transform.scale(image, [width, height])
-        if dir != 'right':
+        if dir != 'r':
             image = pygame.transform.flip(image, True, False)
         self.hitbox = screen.blit(image, [round(x), round(y)])
         return self.hitbox

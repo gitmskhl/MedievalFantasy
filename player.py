@@ -8,9 +8,11 @@ class Warrior:
         self.y = y
         self.state = 'idle'
         self.select = False
+        self.speed = 4
         self.targetx = 100
         self.targety = 100
         self.mustmove = False
+        self.dir = 'r'
         self.selectimg = utils.loadimg('images/UI Elements/UI Elements/Cursors/Cursor_04.png', 1)
         self.anims:dict[str, animation.Animation] = {}
         self.anims['attack1'] = animation.Animation('images/Units/Blue Units/Warrior/Warrior_Attack1.png', 1, 4, 6, True)
@@ -19,9 +21,12 @@ class Warrior:
     def render(self, screen, xcamera, ycamera, scale=1):
         screen_x = (self.x - xcamera) * scale
         screen_y = (self.y - ycamera) * scale
-        self.hitbox:pygame.Rect = self.anims[self.state].render(screen, screen_x, screen_y, 'right', scale)
+        self.hitbox:pygame.Rect = self.anims[self.state].render(screen, screen_x, screen_y, self.dir, scale)
         hitbox_shrink = round(90 * scale)
         self.hitbox = self.hitbox.inflate(-hitbox_shrink, -hitbox_shrink)
+        whit = self.gethitbox()
+        #whit = whit.inflate(-95, -95)
+        pygame.draw.rect(screen, 'red', [whit.x - xcamera * scale, whit.y - ycamera * scale, whit.width, whit.height], 2)
         if self.select == True:
             screen.blit(self.selectimg, [self.hitbox.centerx - self.selectimg.get_width() / 2, self.hitbox.centery - self.selectimg.get_height() / 2])
     def update(self, click):
@@ -32,18 +37,86 @@ class Warrior:
                     self.select = False
                 else:
                     self.select = True
-    def moving(self):
+        if self.mustmove == True:
+            self.state = 'run'
+        else:
+            self.state = 'idle'
+    def moving(self, mlevel, units):
         size = self.anims[self.state].what_size_of_img()
-        if self.targetx > self.x + size[0] / 2:
-            self.x += 10
+        x = self.x + size[0] / 2
+        y = self.y + size[1] / 2
+        dx = self.targetx - x
+        dy = self.targety - y
+        distance = (dx * dx + dy * dy)**.5
+        if abs(distance) < 1:
+            self.mustmove = False
+            return
+        speed = min(self.speed, distance / 5)
+        self.x += dx * speed / distance
+        if dx > 0:
+            self.collisionx(mlevel, 'r')
+            self.dir = 'r'
         else:
-            self.x -= 10
-        if self.targety > self.y + size[1] / 2:
-            self.y += 10
+            self.collisionx(mlevel, 'l')
+            self.dir = 'l'
+        self.y += dy * speed / distance
+
+        
+        if dy > 0:
+            self.collisiony(mlevel, 'd')
         else:
-            self.y -= 10
+            self.collisiony(mlevel, 'u')
+        self.collision_units(units, mlevel)
         if abs(self.targetx - self.x - size[0] / 2) < 10 and abs(self.targety - self.y - size[1] / 2) < 10:
             self.mustmove = False
     def gethitbox(self):
-        return pygame.rect.Rect([self.x, self.y], self.anims[self.state].what_size_of_img())
-        
+        return pygame.rect.Rect([self.x, self.y], self.anims[self.state].what_size_of_img()).inflate(-140, -140)
+    def collisionx(self, mlevel, dir):
+        self.hitbox = self.gethitbox()
+        for i in mlevel.borders:
+            hit = pygame.rect.Rect(i[0], i[1], 64, 64)
+            if hit.colliderect(self.hitbox):
+                self.mustmove = False
+                if dir == 'r':
+                    self.hitbox.right = hit.left
+                if dir == 'l':
+                    self.hitbox.left = hit.right
+        self.x = self.hitbox.x - 70
+
+    def collisiony(self, mlevel, dir):
+        self.hitbox = self.gethitbox()
+        for i in mlevel.borders:
+            hit = pygame.rect.Rect(i[0], i[1], 64, 64)
+            if hit.colliderect(self.hitbox):
+                self.mustmove = False
+                if dir == 'u':
+                    self.hitbox.top = hit.bottom
+                if dir == 'd':
+                    self.hitbox.bottom = hit.top
+        self.y = self.hitbox.y - 70
+    def collision_units(self, units, mlevel):
+        hitboxunit = self.gethitbox()
+        for i in units:
+            if i != self:
+                if hitboxunit.colliderect(i.gethitbox()):
+                    #self.mustmove = False
+                    dx = self.x - i.x
+                    dy = self.y - i.y
+                    distance = (dx * dx + dy * dy)**.5
+                    if abs(distance) < 1:
+                        return
+                    self.x += dx / distance * 5
+                    self.y += dy / distance * 5
+                    if dx > 0:
+                        self.collisionx(mlevel, 'r')
+                    else:
+                        self.collisionx(mlevel, 'l')
+                    if dy > 0:
+                        self.collisiony(mlevel, 'd')
+                    else:
+                        self.collisiony(mlevel, 'u')
+class Pawn(Warrior):
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self.anims['idle'] = animation.Animation('images/Units/Blue Units/Pawn/Pawn_Idle.png', 1, 8, 6, True)
+        self.anims['run'] = animation.Animation('images/Units/Blue Units/Pawn/Pawn_Run.png', 1, 6, 6, True)

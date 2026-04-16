@@ -2,6 +2,7 @@ import pygame
 import animation
 import level
 import pytmx
+import decorations
 
 pygame.init()
 info = pygame.display.Info()
@@ -11,10 +12,13 @@ mlevel = level.Level()
 lastcamx = mlevel.xcamera
 lastcamy = mlevel.ycamera
 moving = False
-warriors = []
-mlevel.load(warriors)
+units = []
+decorations.loadtrees()
+
+
+mlevel.load(units)
 def clicknowhere():
-    for i in warriors:
+    for i in units:
         hitbox = i.gethitbox()
         if hitbox.collidepoint(mpos[0] + mlevel.xcamera, mpos[1] + mlevel.ycamera):
             return False
@@ -36,7 +40,7 @@ while True:
             click = True
             moving = True
             if clicknowhere() == True:
-                for j in warriors:
+                for j in units:
                     if j.select == True:
                         j.targetx = pygame.mouse.get_pos()[0] + mlevel.xcamera
                         j.targety = pygame.mouse.get_pos()[1] + mlevel.ycamera
@@ -67,10 +71,12 @@ while True:
     if pressed[pygame.K_w]:
         mlevel.ycamera -= camera_step
     mlevel.render(screen)
-    for i in warriors:
+    for i in units:
         i.render(screen, mlevel.xcamera, mlevel.ycamera, mlevel.scale)
         i.update(click)
         if i.mustmove == True:
-            i.moving()
+            i.moving(mlevel, units)
+    for i in decorations.trees:
+        i.render(screen, mlevel.xcamera, mlevel.ycamera, mlevel.scale)
 
     pygame.display.update()

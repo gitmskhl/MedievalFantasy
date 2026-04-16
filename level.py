@@ -17,6 +17,18 @@ class Level:
         self.zoom_level = 0
         self.xcamera = 0.0
         self.ycamera = 0.0
+        self.load_borders()
+
+    def load_borders(self):
+        map = pytmx.load_pygame('Tiled/World.tmx') 
+        self.borders = {}
+        for i in map.get_layer_by_name('Borders'):
+            if i[2] != 0:
+                x = i[0] * 64 * self.scale
+                y = i[1] * 64 * self.scale
+                self.borders[(x, y)] = None
+
+
 
     def render(self, screen):
         viewport_size = screen.get_size()
@@ -35,7 +47,10 @@ class Level:
 
         if self.scale == 1:
             screen.blit(visible_part, [offset_x, offset_y])
+            for i in self.borders:
+                pygame.draw.rect(screen, 'red', (i[0] - self.xcamera * self.scale, i[1] - self.ycamera * self.scale, 64 * self.scale, 64 * self.scale))
             return
+            
 
         scaled_size = [
             max(1, round(visible_width * self.scale)),
@@ -43,6 +58,8 @@ class Level:
         ]
         scaled_visible_part = pygame.transform.scale(visible_part, scaled_size)
         screen.blit(scaled_visible_part, [offset_x, offset_y])
+        
+
 
     def screen_to_world(self, x, y):
         return x / self.scale + self.xcamera, y / self.scale + self.ycamera
@@ -78,7 +95,11 @@ class Level:
         #print(1)
         data = pytmx.load_pygame('Tiled/World.tmx')
         #print(2)
-        for x, y, gid in data.get_layer_by_name('Spawners'):
+        for x, y, gid in data.get_layer_by_name('Warrior'):
             if gid != 0:
-                warrior = player.Warrior(x * 64, y * 64)
+                warrior = player.Warrior(x * 64, (y - 2) * 64)
                 warriors.append(warrior)
+        for x, y, gid in data.get_layer_by_name('Pawn'):
+            if gid != 0:
+                pawn = player.Pawn(x * 64, (y - 2) * 64)
+                warriors.append(pawn)

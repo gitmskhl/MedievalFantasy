@@ -26,6 +26,15 @@
             "scaleInDock": 1,
             "scaleInEditor": 1
         },
+        "Icon_09.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Pawn_Idle.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
         "Tilemap_color1.tsx": {
             "dynamicWrapping": false,
             "scaleInDock": 0.75
@@ -45,6 +54,9 @@
             "scaleInDock": 0.75,
             "scaleInEditor": 1
         },
+        "Tree3.tsx": {
+            "dynamicWrapping": false
+        },
         "Warrior_Idle.tsx": {
             "scaleInDock": 0.75,
             "scaleInEditor": 1
@@ -62,11 +74,11 @@
             "scaleInEditor": 1
         },
         "World.tmx": {
-            "scale": 0.75,
-            "selectedLayer": 6,
+            "scale": 1,
+            "selectedLayer": 7,
             "viewCenter": {
-                "x": 3713.333333333333,
-                "y": 3745.333333333333
+                "x": 3964,
+                "y": 3837
             }
         },
         "World.tmx#Decorations": {
@@ -79,17 +91,21 @@
             "scaleInEditor": 1
         }
     },
-    "last.imagePath": "C:/Users/777/OneDrive/Документы/MedievalFantasy/images/Units/Blue Units/Warrior",
+    "last.imagePath": "C:/Users/777/OneDrive/Документы/MedievalFantasy/images/Terrain/Resources/Wood/Trees",
     "map.lastUsedFormat": "tmx",
     "openFiles": [
         "World.tmx",
         "Tilemap_color2.tsx",
         "Tilemap_color3.tsx",
         "Tilemap_color5.tsx",
-        "Warrior_Idle.tsx"
+        "Warrior_Idle.tsx",
+        "Icon_09.tsx",
+        "Pawn_Idle.tsx"
     ],
     "project": "EarthWorld.tiled-project",
     "recentFiles": [
+        "Pawn_Idle.tsx",
+        "Icon_09.tsx",
         "Warrior_Idle.tsx",
         "Tilemap_color5.tsx",
         "Tilemap_color3.tsx",
@@ -99,15 +115,13 @@
         "House1.tsx",
         "C:/Users/777/OneDrive/Документы/MedievalFantasy/images/Terrain/Tileset/Monastery.tsx",
         "House2.tsx",
-        "Water Rocks_01.tsx",
-        "Water Foam.tsx",
-        "test.tsx"
+        "Water Rocks_01.tsx"
     ],
     "resizeMap.removeObjects": false,
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {
-        "height": 192,
-        "width": 192
+        "height": 64,
+        "width": 64
     },
     "tileset.type": 0
 }
